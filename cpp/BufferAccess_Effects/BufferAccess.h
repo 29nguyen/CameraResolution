@@ -14,16 +14,16 @@ using namespace Windows::UI;
 
 namespace BufferAccess_Effects
 {
-	public ref class AccessBuffer sealed: IBasicVideoEffect
+	public ref class AccessBuffer sealed: public IBasicVideoEffect
 	{
 	private:
 		CanvasDevice ^canvasDevice;
 		int numColumns, numRows;
 
 	public:
-		property IVector<VideoEncodingProperties^> ^SupportedEncodingProperties
+		property IVectorView<VideoEncodingProperties^> ^SupportedEncodingProperties
 		{
-			IVector<VideoEncodingProperties^> ^get();
+			IVectorView<VideoEncodingProperties^> ^get();
 		}
 
 		property bool IsReadOnly

@@ -18,9 +18,9 @@ using namespace Windows::UI;
 using namespace Platform::Collections;
 
 
-IVector<VideoEncodingProperties^> ^BufferAccess_Effects::AccessBuffer::SupportedEncodingProperties::get()
+IVectorView<VideoEncodingProperties^> ^BufferAccess_Effects::AccessBuffer::SupportedEncodingProperties::get()
 {
-	return ref new Vector<VideoEncodingProperties^>();
+	return ref new VectorView<VideoEncodingProperties^>();
 }
 
 bool BufferAccess_Effects::AccessBuffer::IsReadOnly::get()
