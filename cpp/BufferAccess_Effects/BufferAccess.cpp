@@ -17,71 +17,74 @@ using namespace Windows::Media::MediaProperties;
 using namespace Windows::UI;
 using namespace Platform::Collections;
 
-
-IVectorView<VideoEncodingProperties^> ^BufferAccess_Effects::AccessBuffer::SupportedEncodingProperties::get()
+namespace BufferAccess_Effects
 {
-	return ref new VectorView<VideoEncodingProperties^>();
-}
-
-bool BufferAccess_Effects::AccessBuffer::IsReadOnly::get()
-{
-	return false;
-}
-
-MediaMemoryTypes BufferAccess_Effects::AccessBuffer::SupportedMemoryTypes::get()
-{
-	return MediaMemoryTypes::Gpu;
-}
-
-void BufferAccess_Effects::AccessBuffer::SetProperties(IPropertySet ^configuration)
-{
-}
-
-bool BufferAccess_Effects::AccessBuffer::TimeIndependent::get()
-{
-	return false;
-}
-
-void BufferAccess_Effects::AccessBuffer::Close(MediaEffectClosedReason reason)
-{
-	if (canvasDevice != nullptr)
+	IVectorView<VideoEncodingProperties^> ^AccessBuffer::SupportedEncodingProperties::get()
 	{
-		delete canvasDevice;
+		return ref new VectorView<VideoEncodingProperties^>();
 	}
-}
 
-void BufferAccess_Effects::AccessBuffer::DiscardQueuedFrames()
-{
-}
-
-void BufferAccess_Effects::AccessBuffer::ProcessFrame(ProcessVideoFrameContext ^context)
-{
+	bool AccessBuffer::IsReadOnly::get()
 	{
-		CanvasBitmap ^input = CanvasBitmap::CreateFromDirect3D11Surface(canvasDevice, context->InputFrame->Direct3DSurface);
-		{
-			CanvasRenderTarget ^output = CanvasRenderTarget::CreateFromDirect3D11Surface(canvasDevice, context->OutputFrame->Direct3DSurface);
-			{
-				CanvasDrawingSession ^ds = output->CreateDrawingSession();
-				ds->Clear(Colors::Black);
-				Platform::Array<uint8> ^buffer = input->GetPixelBytes();
+		return false;
+	}
 
-				for (int i = 0; i < numColumns; i++)
+	MediaMemoryTypes AccessBuffer::SupportedMemoryTypes::get()
+	{
+		return MediaMemoryTypes::Gpu;
+	}
+
+	void AccessBuffer::SetProperties(IPropertySet ^configuration)
+	{
+	}
+
+	bool AccessBuffer::TimeIndependent::get()
+	{
+		return false;
+	}
+
+	void AccessBuffer::Close(MediaEffectClosedReason reason)
+	{
+		if (canvasDevice != nullptr)
+		{
+			delete canvasDevice;
+		}
+	}
+
+	void AccessBuffer::DiscardQueuedFrames()
+	{
+	}
+
+	void AccessBuffer::ProcessFrame(ProcessVideoFrameContext ^context)
+	{
+		{
+			CanvasBitmap ^input = CanvasBitmap::CreateFromDirect3D11Surface(canvasDevice, context->InputFrame->Direct3DSurface);
+			{
+				CanvasRenderTarget ^output = CanvasRenderTarget::CreateFromDirect3D11Surface(canvasDevice, context->OutputFrame->Direct3DSurface);
 				{
-					for (int j = 0; j < numRows; j++)
+					CanvasDrawingSession ^ds = output->CreateDrawingSession();
+					ds->Clear(Colors::Black);
+					Platform::Array<uint8> ^buffer = input->GetPixelBytes();
+
+					for (int i = 0; i < numColumns; i++)
 					{
-						buffer[3 * (j * numColumns + i) + 0] = 255;
+						for (int j = 0; j < numRows; j++)
+						{
+							buffer[3 * (j * numColumns + i) + 0] = 255;
+						}
 					}
+					auto bitmap = CanvasBitmap::CreateFromBytes(canvasDevice, buffer, (numColumns), (numRows), Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized);
+					ds->DrawImage(bitmap);
 				}
-				auto bitmap = CanvasBitmap::CreateFromBytes(canvasDevice, buffer, (numColumns), (numRows), Windows::Graphics::DirectX::DirectXPixelFormat::B8G8R8A8UIntNormalized);
-				ds->DrawImage(bitmap);
 			}
 		}
 	}
-}
 
-void BufferAccess_Effects::AccessBuffer::SetEncodingProperties(VideoEncodingProperties ^encodingProperties, IDirect3DDevice ^device)
-{
-	canvasDevice = CanvasDevice::CreateFromDirect3D11Device(device);
-	numColumns = safe_cast<int32>(encodingProperties->Width);
-	numRows = safe_cast<int32>(encodingProperties->Height);
+	void AccessBuffer::SetEncodingProperties(VideoEncodingProperties ^encodingProperties, IDirect3DDevice ^device)
+	{
+		canvasDevice = CanvasDevice::CreateFromDirect3D11Device(device);
+		numColumns = safe_cast<int32>(encodingProperties->Width);
+		numRows = safe_cast<int32>(encodingProperties->Height);
+	}
+
 }

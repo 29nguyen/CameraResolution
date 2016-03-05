@@ -21,34 +21,34 @@ namespace BufferAccess_Effects
 		int numColumns, numRows;
 
 	public:
-		property IVectorView<VideoEncodingProperties^> ^SupportedEncodingProperties
+		virtual property IVectorView<VideoEncodingProperties^> ^SupportedEncodingProperties
 		{
 			IVectorView<VideoEncodingProperties^> ^get();
 		}
-
-		property bool IsReadOnly
+		
+		virtual property bool IsReadOnly
 		{
 			bool get();
 		}
 
-		property MediaMemoryTypes SupportedMemoryTypes
+		virtual property MediaMemoryTypes SupportedMemoryTypes
 		{
 			MediaMemoryTypes get();
 		}
 
-		void SetProperties(IPropertySet ^configuration);
+		virtual void SetProperties(IPropertySet ^configuration);
 
-		property bool TimeIndependent
+		virtual property bool TimeIndependent
 		{
 			bool get();
 		}
 
-		void Close(MediaEffectClosedReason reason);
+		virtual void Close(MediaEffectClosedReason reason);
 
-		void DiscardQueuedFrames();
+		virtual void DiscardQueuedFrames();
 
-		void ProcessFrame(ProcessVideoFrameContext ^context);
+		virtual void ProcessFrame(ProcessVideoFrameContext ^context);
 
-		void SetEncodingProperties(VideoEncodingProperties ^encodingProperties, IDirect3DDevice ^device);
+		virtual void SetEncodingProperties(VideoEncodingProperties ^encodingProperties, IDirect3DDevice ^device);
 	};
 }
